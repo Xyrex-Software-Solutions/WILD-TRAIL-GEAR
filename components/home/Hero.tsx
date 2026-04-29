@@ -76,8 +76,8 @@ export default function Hero() {
         style={{ top: '-20%', bottom: '-20%' }}
       >
         <Image
-          src="/images/products/hero-hikers.jpeg"
-          alt="Hikers on a Sri Lankan mountain trail"
+          src="/images/upscaled%20home%20page%20image.jpg"
+          alt="Wild Trail Gear mountain landscape"
           fill
           priority
           className="object-cover object-center"

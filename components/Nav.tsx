@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { IconCompass, IconWA, IconMenu, IconX } from './Icons'
+import { IconWA, IconMenu, IconX } from './Icons'
 import { waLink, NAV_LINKS } from '@/lib/constants'
 
 export default function Nav() {
@@ -35,11 +36,14 @@ export default function Nav() {
       >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 flex-shrink-0 no-underline">
-          <IconCompass size={24} />
-          <div className="leading-none">
-            <span className="text-[13px] font-black tracking-tight text-forest uppercase">WILD TRAIL </span>
-            <span className="text-[13px] font-light tracking-eyebrow text-sage uppercase">GEAR</span>
-          </div>
+          <Image
+            src="/images/updated%20logo.jpg"
+            alt="Wild Trail Gear"
+            width={170}
+            height={36}
+            className="h-7 w-auto"
+            priority
+          />
         </Link>
 
         {/* Desktop Links */}

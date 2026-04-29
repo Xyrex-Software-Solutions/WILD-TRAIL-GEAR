@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { IconCompass, IconPin, IconWA, IconMail } from './Icons'
+import Image from 'next/image'
+import { IconPin, IconWA, IconMail } from './Icons'
 import { waLink } from '@/lib/constants'
 
 export default function Footer() {
@@ -35,11 +36,13 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-5">
-              <IconCompass size={20} color="#84A98C" />
-              <div>
-                <span className="text-[13px] font-black text-canvas">WILD TRAIL </span>
-                <span className="text-[13px] font-light text-sage-light">GEAR</span>
-              </div>
+              <Image
+                src="/images/updated%20logo.jpg"
+                alt="Wild Trail Gear"
+                width={170}
+                height={36}
+                className="h-7 w-auto"
+              />
             </div>
             <p className="text-[13px] leading-relaxed mb-4" style={{ color: 'rgba(248,245,240,0.55)' }}>
               Handpicked outdoor gear for Sri Lanka's trails. Based in Panadura.
