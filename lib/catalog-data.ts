@@ -17,6 +17,7 @@ export type CatalogItem = {
   priceFrom?: number
   tag?: string
   waMessage: string
+  quantity?: number
 }
 
 export const CATALOG: CatalogItem[] = [

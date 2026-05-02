@@ -1,0 +1,20 @@
+{
+  "name": "wild-trail-gear",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "firebase": "^12.12.1",
+    "gsap": "^3.12.5",
+    "next": "^14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "firebase-frameworks": "^0.11.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-admin": "^11.11.1"
+  },
+  "main": "server.js",
+  "engines": {
+    "node": "24"
+  }
+}

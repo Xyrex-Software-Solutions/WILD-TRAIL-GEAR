@@ -31,76 +31,63 @@ export default function Footer() {
           </a>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 mb-5">
-              <Image
-                src="/images/updated%20logo.jpg"
-                alt="Wild Trail Gear"
-                width={170}
-                height={36}
-                className="h-7 w-auto"
-              />
+        {/* Links Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-16">
+          <div className="col-span-1 md:col-span-1">
+            <div className="flex items-center gap-2.5 mb-6">
+              <div className="w-10 h-10 bg-sage rounded-xl flex items-center justify-center">
+                <IconPin size={22} color="#F8F5F0" />
+              </div>
+              <div>
+                <div className="font-black text-[15px] uppercase tracking-tighter leading-none">Wild Trail</div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-sage-light">Panadura</div>
+              </div>
             </div>
-            <p className="text-[13px] leading-relaxed mb-4" style={{ color: 'rgba(248,245,240,0.55)' }}>
-              Handpicked outdoor gear for Sri Lanka's trails. Based in Panadura.
+            <p className="text-sm leading-relaxed" style={{ color: 'rgba(248,245,240,0.5)' }}>
+              Premium gear rentals for the modern explorer. From tents to stoves, we prepare you for the untamed path.
             </p>
-            <div className="flex items-center gap-1.5 text-[13px]" style={{ color: 'rgba(248,245,240,0.5)' }}>
-              <IconPin size={13} color="#84A98C" /> Panadura, Sri Lanka
+          </div>
+
+          <div>
+            <h4 className="font-bold text-[11px] uppercase tracking-widest mb-6" style={{ color: 'rgba(248,245,240,0.3)' }}>Quick Links</h4>
+            <div className="flex flex-col gap-3 text-sm font-medium">
+              <Link href="/" className="hover:text-sage-light transition-colors">Home</Link>
+              <Link href="/catalog" className="hover:text-sage-light transition-colors">Catalog</Link>
+              <Link href="/about" className="hover:text-sage-light transition-colors">Our Story</Link>
+              <Link href="/contact" className="hover:text-sage-light transition-colors">Contact</Link>
             </div>
           </div>
 
-          {/* Catalog */}
           <div>
-            <div className="text-[11px] font-bold tracking-eyebrow uppercase text-sage-light mb-4">Catalog</div>
-            {['Tents', 'Cooking Gear', 'Hammocks', 'Accessories', 'Socks & Bags'].map(l => (
-              <Link
-                key={l}
-                href="/catalog"
-                className="text-[13px] block mb-2.5 no-underline transition-colors"
-                style={{ color: 'rgba(248,245,240,0.6)' }}
-              >
-                {l}
-              </Link>
-            ))}
-          </div>
-
-          {/* Company */}
-          <div>
-            <div className="text-[11px] font-bold tracking-eyebrow uppercase text-sage-light mb-4">Company</div>
-            {[['About Us', '/about'], ['Contact', '/contact'], ['Home', '/']].map(([l, href]) => (
-              <Link
-                key={l}
-                href={href}
-                className="text-[13px] block mb-2.5 no-underline"
-                style={{ color: 'rgba(248,245,240,0.6)' }}
-              >
-                {l}
-              </Link>
-            ))}
-          </div>
-
-          {/* Contact */}
-          <div>
-            <div className="text-[11px] font-bold tracking-eyebrow uppercase text-sage-light mb-4">Contact</div>
-            <div className="flex flex-col gap-3">
-              <a
-                href={waLink()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[13px] no-underline"
-                style={{ color: 'rgba(248,245,240,0.6)' }}
-              >
-                <IconWA size={13} /> +94 754 768 386
+            <h4 className="font-bold text-[11px] uppercase tracking-widest mb-6" style={{ color: 'rgba(248,245,240,0.3)' }}>Contact Us</h4>
+            <div className="flex flex-col gap-4 text-sm">
+              <a href={waLink()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group no-underline text-canvas">
+                <IconWA size={16} className="text-sage group-hover:text-sage-light" />
+                <span>+94 77 123 4567</span>
               </a>
-              <div className="flex items-center gap-2 text-[13px]" style={{ color: 'rgba(248,245,240,0.6)' }}>
-                <IconMail size={13} color="#84A98C" /> hello@wildtrailgear.lk
+              <a href="mailto:hello@wildtrailgear.lk" className="flex items-center gap-3 group no-underline text-canvas">
+                <IconMail size={16} className="text-sage group-hover:text-sage-light" />
+                <span>hello@wildtrailgear.lk</span>
+              </a>
+              <div className="flex items-start gap-3">
+                <IconPin size={16} className="text-sage mt-0.5" />
+                <span>123 Trail Road, Panadura,<br />Sri Lanka</span>
               </div>
-              <div className="flex items-center gap-2 text-[13px]" style={{ color: 'rgba(248,245,240,0.6)' }}>
-                <IconPin size={13} color="#84A98C" /> Panadura, Sri Lanka
-              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-[11px] uppercase tracking-widest mb-6" style={{ color: 'rgba(248,245,240,0.3)' }}>Newsletter</h4>
+            <p className="text-sm mb-4" style={{ color: 'rgba(248,245,240,0.5)' }}>Get the latest trail updates and gear drops.</p>
+            <div className="flex gap-2">
+              <input 
+                type="email" 
+                placeholder="Email address" 
+                className="bg-transparent border border-[rgba(248,245,240,0.1)] rounded-full px-4 py-2 text-sm outline-none focus:border-sage transition-colors w-full"
+              />
+              <button className="bg-sage text-canvas rounded-full px-5 py-2 text-xs font-bold hover:bg-sage-light transition-colors">
+                Join
+              </button>
             </div>
           </div>
         </div>
@@ -113,9 +100,11 @@ export default function Footer() {
           <span className="text-[11px]" style={{ color: 'rgba(248,245,240,0.3)' }}>
             © 2026 Wild Trail Gear. All rights reserved.
           </span>
-          <span className="text-[11px] flex items-center gap-1.5" style={{ color: 'rgba(248,245,240,0.3)' }}>
-            <IconPin size={10} color="rgba(248,245,240,0.3)" /> Sri Lanka · LKR
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-[11px] flex items-center gap-1.5" style={{ color: 'rgba(248,245,240,0.3)' }}>
+              <IconPin size={10} color="rgba(248,245,240,0.3)" /> Sri Lanka · LKR
+            </span>
+          </div>
         </div>
       </div>
     </footer>

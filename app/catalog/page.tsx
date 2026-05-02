@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -8,28 +8,46 @@ import { useGSAP } from '@gsap/react'
 import { IconCompass, IconBoot, IconWA, IconSearch } from '@/components/Icons'
 import Eyebrow from '@/components/Eyebrow'
 import { waLink } from '@/lib/constants'
-import { CATALOG, CATEGORIES, type CatalogItem } from '@/lib/catalog-data'
+import { CATEGORIES, type CatalogItem } from '@/lib/catalog-data'
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const AVAIL_COLORS = {
+const AVAIL_COLORS: Record<string, string> = {
   available: '#4ADE80',
   limited: '#FDBA74',
   unavailable: '#FF6B6B',
 }
-const AVAIL_LABELS = {
+const AVAIL_LABELS: Record<string, string> = {
   available: 'Available',
   limited: 'Limited',
   unavailable: 'Unavailable',
 }
 
 export default function CatalogPage() {
+  const [items, setItems] = useState<CatalogItem[]>([])
   const [activeCat, setActiveCat] = useState('All')
   const [search, setSearch] = useState('')
   const [onlyAvail, setOnlyAvail] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const headerRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
+
+  // Fetch from Firestore
+  useEffect(() => {
+    const q = query(collection(db, "rental_items"), orderBy("name", "asc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data() 
+      } as unknown as CatalogItem));
+      setItems(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useGSAP(() => {
     if (headerRef.current) {
@@ -43,7 +61,7 @@ export default function CatalogPage() {
   }, { scope: headerRef })
 
   useGSAP(() => {
-    if (!gridRef.current) return
+    if (!gridRef.current || loading) return
     const cards = gridRef.current.querySelectorAll('.catalog-card')
     gsap.fromTo(
       cards,
@@ -52,12 +70,14 @@ export default function CatalogPage() {
         y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', stagger: 0.08, delay: 0.15,
       }
     )
-  }, { scope: gridRef, dependencies: [activeCat, search, onlyAvail] })
+  }, { scope: gridRef, dependencies: [activeCat, search, onlyAvail, loading] })
 
-  const filtered = CATALOG.filter(g => {
+  const filtered = items.filter(g => {
+    const effectiveAvail = g.availability || 'available'
+    
     const matchCat = activeCat === 'All' || g.category === activeCat
     const matchSearch = g.name.toLowerCase().includes(search.toLowerCase())
-    const matchAvail = !onlyAvail || g.availability !== 'unavailable'
+    const matchAvail = !onlyAvail || effectiveAvail !== 'unavailable'
     return matchCat && matchSearch && matchAvail
   })
 
@@ -99,7 +119,6 @@ export default function CatalogPage() {
         style={{ borderBottom: '1px solid #EDE8E0' }}
       >
         <div className="max-w-[1200px] mx-auto flex items-center gap-6 flex-wrap">
-          {/* Category pills */}
           <div className="flex gap-2 flex-wrap flex-1">
             {CATEGORIES.map(cat => (
               <button
@@ -118,7 +137,6 @@ export default function CatalogPage() {
             ))}
           </div>
 
-          {/* Available only toggle */}
           <label className="flex items-center gap-2 text-[13px] font-semibold text-slate cursor-pointer whitespace-nowrap select-none">
             <div
               onClick={() => setOnlyAvail(v => !v)}
@@ -136,7 +154,6 @@ export default function CatalogPage() {
             Available only
           </label>
 
-          {/* Search */}
           <div className="relative">
             <div className="absolute left-3 top-1/2 -translate-y-1/2">
               <IconSearch size={14} />
@@ -158,7 +175,12 @@ export default function CatalogPage() {
 
       {/* Grid */}
       <div className="max-w-[1200px] mx-auto px-16 pt-14 pb-24">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-20 text-slate">
+            <div className="animate-pulse text-4xl mb-4">⛺</div>
+            <p className="text-sm font-medium">Loading catalog from cloud...</p>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="text-center py-20 text-slate">
             <div className="text-6xl mb-4 opacity-20">⛺</div>
             <p className="text-base">No gear found. Try a different filter or search.</p>
@@ -175,9 +197,11 @@ export default function CatalogPage() {
           </div>
         )}
 
-        <div className="text-center mt-10 text-[13px] text-slate">
-          Showing {filtered.length} of {CATALOG.length} items
-        </div>
+        {!loading && (
+          <div className="text-center mt-10 text-[13px] text-slate">
+            Showing {filtered.length} of {items.length} items
+          </div>
+        )}
       </div>
     </div>
   )
@@ -197,6 +221,8 @@ function CatalogCard({ item }: { item: CatalogItem }) {
     if (cardRef.current) cardRef.current.style.boxShadow = 'none'
   }
 
+  const currentAvail = item.availability || 'available';
+
   return (
     <div
       ref={cardRef}
@@ -204,45 +230,42 @@ function CatalogCard({ item }: { item: CatalogItem }) {
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
-      {/* Image */}
       <div className="relative h-48">
-        <Image
-          src={item.image}
-          alt={item.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
+        {item.image && (
+          <Image
+            src={item.image}
+            alt={item.name}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        )}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.30) 100%)' }} />
 
-        {/* Tag */}
         {item.tag && (
           <div className="absolute top-3.5 left-3.5 bg-forest text-canvas rounded-full text-[11px] font-bold px-3 py-1">
             {item.tag}
           </div>
         )}
 
-        {/* Availability badge */}
         <div
           className="absolute top-3.5 right-3.5 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold text-white"
           style={{ background: 'rgba(0,0,0,0.55)' }}
         >
           <span
             className="w-1.5 h-1.5 rounded-full inline-block"
-            style={{ background: AVAIL_COLORS[item.availability] }}
+            style={{ background: AVAIL_COLORS[currentAvail] }}
           />
-          {AVAIL_LABELS[item.availability]}
+          {AVAIL_LABELS[currentAvail]}
         </div>
       </div>
 
-      {/* Body */}
       <div className="p-5 pb-6">
         <div className="text-[11px] font-bold tracking-eyebrow uppercase text-sage mb-1.5">• {item.category}</div>
         <div className="text-base font-semibold text-ink mb-3" style={{ letterSpacing: '-0.01em', lineHeight: 1.3 }}>
           {item.name}
         </div>
 
-        {/* Tent size variants */}
         {item.variants && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {item.variants.map(v => (
@@ -268,17 +291,17 @@ function CatalogCard({ item }: { item: CatalogItem }) {
             {!item.variants && <span className="text-[11px] font-normal opacity-70">/day</span>}
           </div>
           <a
-            href={waLink(item.waMessage)}
+            href={waLink(item.waMessage || "Hi! I'd like to rent this gear.")}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 rounded-[20px] px-4 py-2 text-xs font-semibold text-white no-underline"
             style={{
-              background: item.availability === 'unavailable' ? '#b0b0b0' : '#25D366',
-              pointerEvents: item.availability === 'unavailable' ? 'none' : 'auto',
+              background: currentAvail === 'unavailable' ? '#b0b0b0' : '#25D366',
+              pointerEvents: currentAvail === 'unavailable' ? 'none' : 'auto',
             }}
           >
             <IconWA size={13} />
-            {item.availability === 'unavailable' ? 'Unavailable' : 'Rent Now'}
+            {currentAvail === 'unavailable' ? 'Unavailable' : 'Rent Now'}
           </a>
         </div>
       </div>
