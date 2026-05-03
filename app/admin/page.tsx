@@ -19,7 +19,8 @@ import {
   onAuthStateChanged,
   User
 } from "firebase/auth";
-import { db, auth } from "@/lib/firebase";
+import { db, auth, storage } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -209,6 +210,24 @@ function AdminPanelContent() {
   // Form states
   const [itemForm, setItemForm] = useState<any>(emptyItem);
   const [editItemId, setEditItemId] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handleImageUpload = async (e: any) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    try {
+      const storageRef = ref(storage, `equipment/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      setItemForm((f: any) => ({ ...f, image: url }));
+    } catch (err) {
+      alert("Error uploading image");
+      console.error(err);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
   
   const [custForm, setCustForm] = useState<any>(emptyCustomer);
   const [editCustId, setEditCustId] = useState<string | null>(null);
@@ -652,6 +671,28 @@ function AdminPanelContent() {
       {modal === "item" && (
         <Modal title={editItemId ? "Edit Item" : "Add New Item"} onClose={() => setModal(null)}>
           <Input label="Name" value={itemForm.name} onChange={(e: any) => setItemForm((f: any) => ({ ...f, name: e.target.value }))} />
+          
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Item Photo</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              {itemForm.image && (
+                <div style={{ width: 64, height: 64, borderRadius: 12, overflow: 'hidden', border: '1px solid #EDE8E0', flexShrink: 0, background: '#f8f9fa' }}>
+                  <img src={itemForm.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              )}
+              <div style={{ flex: 1 }}>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ width: '100%', fontSize: 13, padding: '8px 0', outline: 'none' }}
+                  disabled={uploadingImage}
+                />
+                {uploadingImage && <div style={{ fontSize: 11, color: '#84A98C', marginTop: 4, fontWeight: 600 }}>Uploading to Trail Cloud...</div>}
+              </div>
+            </div>
+          </div>
+
           <Select label="Category" value={itemForm.category} onChange={(e: any) => setItemForm((f: any) => ({ ...f, category: e.target.value }))}>
             {CATEGORIES.map(c => <option key={c}>{c}</option>)}
           </Select>
