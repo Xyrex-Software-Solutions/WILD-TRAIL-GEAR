@@ -157,13 +157,13 @@ const Btn = ({ children, variant = "primary", onClick, style = {}, disabled, typ
 };
 
 const Modal = ({ title, onClose, children, width = 560 }: any) => (
-  <div style={{ position: "fixed", inset: 0, background: "rgba(14,20,16,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20, backdropFilter: 'blur(4px)' }}>
-    <div style={{ background: "#F8F5F0", borderRadius: 24, width: "100%", maxWidth: width, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 25px 50px rgba(0,0,0,0.25)", border: '1px solid rgba(27,67,50,0.1)' }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "24px 32px", borderBottom: "1px solid #EDE8E0" }}>
-        <h3 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: "#1B4332", textTransform: 'uppercase', letterSpacing: '-0.02em' }}>{title}</h3>
+  <div style={{ position: "fixed", inset: 0, background: "rgba(14,20,16,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 16, backdropFilter: 'blur(4px)' }}>
+    <div style={{ background: "#F8F5F0", borderRadius: 24, width: "100%", maxWidth: width, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 25px 50px rgba(0,0,0,0.25)", border: '1px solid rgba(27,67,50,0.1)', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", borderBottom: "1px solid #EDE8E0", position: 'sticky', top: 0, background: '#F8F5F0', zIndex: 10 }}>
+        <h3 style={{ margin: 0, fontSize: 16, fontWeight: 900, color: "#1B4332", textTransform: 'uppercase', letterSpacing: '-0.02em' }}>{title}</h3>
         <button onClick={onClose} style={{ background: "#EDE8E0", border: "none", width: 32, height: 32, borderRadius: 10, cursor: "pointer", fontSize: 16, color: "#1B4332", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
       </div>
-      <div style={{ padding: 32 }}>{children}</div>
+      <div style={{ padding: "24px" }}>{children}</div>
     </div>
   </div>
 );
@@ -187,6 +187,18 @@ function AdminPanelContent() {
 
   const [tab, setTab] = useState("dashboard");
   const [modal, setModal] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+      if (window.innerWidth >= 1024) setIsSidebarOpen(true);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const hasSecretKey = searchParams.get("key") === ADMIN_SECRET_KEY;
 
@@ -359,7 +371,9 @@ function AdminPanelContent() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#F8F5F0", padding: 20 }}>
         <div style={{ background: "#fff", padding: 40, borderRadius: 24, width: "100%", maxWidth: 400, boxShadow: "0 20px 40px rgba(0,0,0,0.05)", border: "1px solid #EDE8E0" }}>
           <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{ width: 64, height: 64, background: "#1B4332", borderRadius: 20, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, margin: "0 auto 16px" }}>⛺</div>
+            <div style={{ width: 100, height: 100, margin: "0 auto 16px", borderRadius: 24, overflow: 'hidden', border: '1px solid #EDE8E0', background: '#fff' }}>
+              <img src="/images/updated logo.jpg" alt="Wild Trail Gear Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
             <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: "#1B4332", textTransform: 'uppercase', letterSpacing: '-0.03em' }}>Admin Login</h1>
             <p style={{ color: "#84A98C", fontSize: 13, fontWeight: 600, marginTop: 4 }}>Wild Trail Gear Management Console</p>
           </div>
@@ -379,22 +393,53 @@ function AdminPanelContent() {
   }
 
   // --- Dashboard Data ---
+  // --- Dashboard Data ---
   const activeRentals = rentals.filter(r => r.status === "active").length;
   const totalRevenue = rentals.reduce((s, r) => s + r.totalAmount, 0);
   const lowStock = items.filter(i => i.quantity < 5).length;
-  const sidebarW = 240;
+  const sidebarW = 260;
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', sans-serif", background: "#F8F5F0" }}>
+      {/* Mobile Sidebar Overlay */}
+      {isMobile && isSidebarOpen && (
+        <div 
+          onClick={() => setIsSidebarOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, backdropFilter: 'blur(2px)' }}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside style={{ width: sidebarW, background: "#1B2E20", flexShrink: 0, display: "flex", flexDirection: "column", minHeight: "100vh", position: "sticky", top: 0, height: "100vh" }}>
+      <aside style={{ 
+        width: sidebarW, 
+        background: "#1B2E20", 
+        flexShrink: 0, 
+        display: "flex", 
+        flexDirection: "column", 
+        minHeight: "100vh", 
+        position: isMobile ? "fixed" : "sticky", 
+        top: 0, 
+        height: "100vh",
+        left: isMobile && !isSidebarOpen ? -sidebarW : 0,
+        transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        zIndex: 101,
+        boxShadow: isMobile ? '10px 0 30px rgba(0,0,0,0.2)' : 'none'
+      }}>
         <div style={{ padding: "32px 24px 24px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-            <div style={{ width: 38, height: 38, background: "#84A98C", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>⛺</div>
+            <div style={{ width: 42, height: 42, background: "#fff", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", overflow: 'hidden' }}>
+              <img src="/images/updated logo.jpg" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
             <div>
               <div style={{ fontSize: 15, fontWeight: 900, color: "#F8F5F0", lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: '-0.02em' }}>WILD TRAIL</div>
               <div style={{ fontSize: 11, color: "#84A98C", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Management</div>
             </div>
+            {isMobile && (
+              <button 
+                onClick={() => setIsSidebarOpen(false)}
+                style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: 8, borderRadius: 8, cursor: 'pointer' }}
+              >✕</button>
+            )}
           </div>
         </div>
         <nav style={{ flex: 1, padding: "0 16px" }}>
@@ -405,7 +450,7 @@ function AdminPanelContent() {
             { id: "customers", icon: "⊡", label: "Customers" },
             { id: "billing", icon: "⊠", label: "Financials" },
           ].map(n => (
-            <button key={n.id} onClick={() => setTab(n.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 12, border: "none", cursor: "pointer", marginBottom: 4, background: tab === n.id ? "#1B4332" : "transparent", color: tab === n.id ? "#84A98C" : "#A8B5AB", fontSize: 14, fontWeight: tab === n.id ? 700 : 500, textAlign: "left", transition: "all 0.2s" }}>
+            <button key={n.id} onClick={() => { setTab(n.id); if (isMobile) setIsSidebarOpen(false); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 12, border: "none", cursor: "pointer", marginBottom: 4, background: tab === n.id ? "#1B4332" : "transparent", color: tab === n.id ? "#84A98C" : "#A8B5AB", fontSize: 14, fontWeight: tab === n.id ? 700 : 500, textAlign: "left", transition: "all 0.2s" }}>
               <span style={{ fontSize: 18, lineHeight: 1, opacity: tab === n.id ? 1 : 0.6 }}>{n.icon}</span>
               {n.label}
             </button>
@@ -422,33 +467,52 @@ function AdminPanelContent() {
 
       {/* Main content */}
       <main style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        <header style={{ background: "#fff", borderBottom: "1px solid #EDE8E0", padding: "0 32px", height: 72, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: "#1B4332", textTransform: 'uppercase', letterSpacing: '-0.03em' }}>{tab.toUpperCase()}</h1>
-          <div style={{ display: "flex", gap: 10 }}>
-            {tab === "items" && <Btn onClick={() => { setItemForm(emptyItem); setEditItemId(null); setModal("item"); }}>+ New Item</Btn>}
-            {tab === "customers" && <Btn onClick={() => { setCustForm(emptyCustomer); setEditCustId(null); setModal("customer"); }}>+ New Customer</Btn>}
-            {tab === "rentals" && <Btn onClick={() => { setRentalForm({ customerId: "", rentDate: "", returnDate: "", notes: "", items: [] }); setModal("rental"); }}>+ New Rental</Btn>}
+        <header style={{ 
+          background: "#fff", 
+          borderBottom: "1px solid #EDE8E0", 
+          padding: isMobile ? "0 16px" : "0 32px", 
+          height: isMobile ? 64 : 72, 
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "space-between", 
+          position: "sticky", 
+          top: 0, 
+          zIndex: 10 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {isMobile && (
+              <button 
+                onClick={() => setIsSidebarOpen(true)}
+                style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', padding: 0, color: '#1B4332' }}
+              >☰</button>
+            )}
+            <h1 style={{ margin: 0, fontSize: isMobile ? 16 : 20, fontWeight: 900, color: "#1B4332", textTransform: 'uppercase', letterSpacing: '-0.03em' }}>{tab.toUpperCase()}</h1>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {tab === "items" && <Btn onClick={() => { setItemForm(emptyItem); setEditItemId(null); setModal("item"); }} style={{ padding: isMobile ? "8px 12px" : "10px 20px" }}>{isMobile ? "+ Add" : "+ New Item"}</Btn>}
+            {tab === "customers" && <Btn onClick={() => { setCustForm(emptyCustomer); setEditCustId(null); setModal("customer"); }} style={{ padding: isMobile ? "8px 12px" : "10px 20px" }}>{isMobile ? "+ Add" : "+ New Customer"}</Btn>}
+            {tab === "rentals" && <Btn onClick={() => { setRentalForm({ customerId: "", rentDate: "", returnDate: "", notes: "", items: [] }); setModal("rental"); }} style={{ padding: isMobile ? "8px 12px" : "10px 20px" }}>{isMobile ? "+ Add" : "+ New Rental"}</Btn>}
           </div>
         </header>
 
-        <div style={{ padding: 32, flex: 1 }}>
+        <div style={{ padding: isMobile ? 16 : 32, flex: 1 }}>
           {/* Dashboard */}
           {tab === "dashboard" && (
             <div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20, marginBottom: 32 }}>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(auto-fit, minmax(220px, 1fr))", gap: isMobile ? 12 : 20, marginBottom: 32 }}>
                 {[
-                  { label: "Inventory Items", value: items.length, color: "#1B4332" },
-                  { label: "Active Rentals", value: activeRentals, color: "#52796F" },
-                  { label: "Registered Customers", value: customers.length, color: "#2D4A35" },
-                  { label: "Total Revenue", value: `LKR ${totalRevenue.toLocaleString()}`, color: "#C8651A" },
+                  { label: "Inventory", value: items.length, color: "#1B4332" },
+                  { label: "Active", value: activeRentals, color: "#52796F" },
+                  { label: "Customers", value: customers.length, color: "#2D4A35" },
+                  { label: "Revenue", value: `LKR ${totalRevenue.toLocaleString()}`, color: "#C8651A" },
                 ].map(s => (
-                  <div key={s.label} style={{ background: "#fff", borderRadius: 20, padding: "24px", border: "1px solid #EDE8E0", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#84A98C", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>{s.label}</div>
-                    <div style={{ fontSize: 28, fontWeight: 900, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</div>
+                  <div key={s.label} style={{ background: "#fff", borderRadius: 20, padding: isMobile ? "16px" : "24px", border: "1px solid #EDE8E0", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#84A98C", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>{s.label}</div>
+                    <div style={{ fontSize: isMobile ? 18 : 28, fontWeight: 900, color: s.color, letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.value}</div>
                   </div>
                 ))}
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 24 }}>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(400px, 1fr))", gap: 24 }}>
                 <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
                   <div style={{ padding: "20px 24px", borderBottom: "1px solid #EDE8E0", fontWeight: 900, fontSize: 15, color: "#1B4332" }}>RECENT RENTALS</div>
                   {rentals.slice(0, 5).map(r => (
@@ -465,22 +529,22 @@ function AdminPanelContent() {
 
           {/* Items */}
           {tab === "items" && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(auto-fill, minmax(280px, 1fr))", gap: isMobile ? 12 : 20 }}>
               {items.map(item => (
-                <div key={item.id} style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
-                  <div style={{ height: 160, background: item.image ? `url(${item.image}) center/cover` : "#EDE8E0", position: 'relative' }}>
-                    <div style={{ position: "absolute", top: 12, right: 12 }}><Badge label={item.category} color="#1B4332" /></div>
+                <div key={item.id} style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden", display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ height: isMobile ? 120 : 160, background: item.image ? `url(${item.image}) center/cover` : "#EDE8E0", position: 'relative' }}>
+                    <div style={{ position: "absolute", top: 8, right: 8 }}><Badge label={item.category} color="#1B4332" /></div>
                   </div>
-                  <div style={{ padding: 20 }}>
-                    <div style={{ fontWeight: 900, fontSize: 16, color: "#1B4332", marginBottom: 6 }}>{item.name}</div>
-                    <div style={{ display: "flex", justifyContent: "space-between", background: '#F8F5F0', padding: 12, borderRadius: 16, marginBottom: 16 }}>
-                      <div><div style={{ fontSize: 10, fontWeight: 800 }}>STOCK</div><div style={{ fontSize: 18, fontWeight: 900 }}>{item.quantity}</div></div>
-                      <div style={{ textAlign: 'right' }}><div style={{ fontSize: 10, fontWeight: 800 }}>PRICE</div><div style={{ fontSize: 14, fontWeight: 900 }}>LKR {item.pricePerDay}</div></div>
+                  <div style={{ padding: isMobile ? 12 : 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ fontWeight: 900, fontSize: isMobile ? 14 : 16, color: "#1B4332", marginBottom: 6, lineClamp: 1, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 1, overflow: 'hidden' }}>{item.name}</div>
+                    <div style={{ display: "flex", justifyContent: "space-between", background: '#F8F5F0', padding: isMobile ? 8 : 12, borderRadius: 12, marginBottom: 12 }}>
+                      <div><div style={{ fontSize: 8, fontWeight: 800 }}>STOCK</div><div style={{ fontSize: isMobile ? 14 : 18, fontWeight: 900 }}>{item.quantity}</div></div>
+                      <div style={{ textAlign: 'right' }}><div style={{ fontSize: 8, fontWeight: 800 }}>PRICE</div><div style={{ fontSize: isMobile ? 12 : 14, fontWeight: 900 }}>LKR {item.pricePerDay}</div></div>
                     </div>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <Btn variant="ghost" onClick={() => openQtyModal(item)} style={{ flex: 1, fontSize: 11 }}>STOCK</Btn>
-                      <Btn variant="secondary" onClick={() => { setItemForm(item); setEditItemId(item.id); setModal("item"); }} style={{ flex: 1, fontSize: 11 }}>EDIT</Btn>
-                      <Btn variant="danger" onClick={() => deleteItem(item.id)}>✕</Btn>
+                    <div style={{ display: "flex", gap: 6, marginTop: 'auto' }}>
+                      <Btn variant="ghost" onClick={() => openQtyModal(item)} style={{ flex: 1, fontSize: 10, padding: '6px 4px', justifyContent: 'center' }}>STOCK</Btn>
+                      <Btn variant="secondary" onClick={() => { setItemForm(item); setEditItemId(item.id); setModal("item"); }} style={{ flex: 1, fontSize: 10, padding: '6px 4px', justifyContent: 'center' }}>EDIT</Btn>
+                      {!isMobile && <Btn variant="danger" onClick={() => deleteItem(item.id)}>✕</Btn>}
                     </div>
                   </div>
                 </div>
@@ -490,8 +554,8 @@ function AdminPanelContent() {
 
           {/* Rentals */}
           {tab === "rentals" && (
-            <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: isMobile ? 600 : 'auto' }}>
                 <thead><tr style={{ background: "#F8F5F0" }}>{["CUSTOMER", "GEAR", "RENT", "DAYS", "TOTAL", "STATUS", "ACTIONS"].map(h => <th key={h} style={{ padding: 16, textAlign: 'left', fontSize: 10, fontWeight: 800, color: "#84A98C" }}>{h}</th>)}</tr></thead>
                 <tbody>
                   {rentals.map(r => (
@@ -517,8 +581,8 @@ function AdminPanelContent() {
 
           {/* Customers */}
           {tab === "customers" && (
-            <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: isMobile ? 500 : 'auto' }}>
                 <thead><tr style={{ background: "#F8F5F0" }}>{["NAME", "PHONE", "EMAIL", "ACTIONS"].map(h => <th key={h} style={{ padding: 16, textAlign: 'left', fontSize: 10, fontWeight: 800, color: "#84A98C" }}>{h}</th>)}</tr></thead>
                 <tbody>
                   {customers.map(c => (
@@ -536,9 +600,9 @@ function AdminPanelContent() {
 
           {/* Financials */}
           {tab === "billing" && (
-             <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
+             <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflowX: "auto" }}>
               <div style={{ padding: 24, borderBottom: '1px solid #F8F5F0', fontWeight: 900 }}>TRANSACTION HISTORY</div>
-               <table style={{ width: "100%", borderCollapse: "collapse" }}>
+               <table style={{ width: "100%", borderCollapse: "collapse", minWidth: isMobile ? 500 : 'auto' }}>
                 <thead><tr style={{ background: "#F8F5F0" }}>{["INVOICE #", "CUSTOMER", "AMOUNT", "STATUS"].map(h => <th key={h} style={{ padding: 16, textAlign: 'left', fontSize: 10, fontWeight: 800, color: "#84A98C" }}>{h}</th>)}</tr></thead>
                 <tbody>
                   {rentals.map(r => (
@@ -595,26 +659,34 @@ function AdminPanelContent() {
             <option value="">Select Renter</option>
             {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </Select>
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 10, flexDirection: isMobile ? 'column' : 'row' }}>
             <Input label="Start" type="date" value={rentalForm.rentDate} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, rentDate: e.target.value }))} />
             <Input label="End" type="date" value={rentalForm.returnDate} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, returnDate: e.target.value }))} />
           </div>
-          <div style={{ background: '#f8fafc', padding: 15, borderRadius: 15, marginBottom: 15 }}>
-            <Select value={rentalItemSel.itemId} onChange={(e: any) => setRentalItemSel((s: any) => ({ ...s, itemId: e.target.value }))}>
-              <option value="">Select Gear</option>
-              {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
-            </Select>
-            <Btn onClick={() => {
-              const itm = items.find(i => i.id === rentalItemSel.itemId);
-              if (itm) setRentalForm((f: any) => ({ ...f, items: [...f.items, { itemId: itm.id, itemName: itm.name, qty: 1, pricePerDay: itm.pricePerDay }] }));
-            }}>Add Gear</Btn>
+          <div style={{ background: '#f8fafc', padding: isMobile ? 12 : 15, borderRadius: 15, marginBottom: 15 }}>
+            <div style={{ display: 'flex', gap: 8, flexDirection: isMobile ? 'column' : 'row' }}>
+              <div style={{ flex: 1 }}>
+                <Select value={rentalItemSel.itemId} onChange={(e: any) => setRentalItemSel((s: any) => ({ ...s, itemId: e.target.value }))}>
+                  <option value="">Select Gear</option>
+                  {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
+                </Select>
+              </div>
+              <Btn onClick={() => {
+                const itm = items.find(i => i.id === rentalItemSel.itemId);
+                if (itm) setRentalForm((f: any) => ({ ...f, items: [...f.items, { itemId: itm.id, itemName: itm.name, qty: 1, pricePerDay: itm.pricePerDay }] }));
+              }} style={{ height: isMobile ? 42 : 44 }}>Add Gear</Btn>
+            </div>
             <div style={{ marginTop: 10 }}>
-              {rentalForm.items.map((x: any) => <div key={x.itemId} style={{ marginTop: 5, fontSize: 13, fontWeight: 700 }}>{x.itemName} <span style={{ color: '#84A98C' }}>×1</span></div>)}
+              {rentalForm.items.map((x: any, idx: number) => (
+                <div key={idx} style={{ marginTop: 5, fontSize: 13, fontWeight: 700, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>{x.itemName} <span style={{ color: '#84A98C' }}>×1</span></span>
+                  <button onClick={() => setRentalForm((f: any) => ({ ...f, items: f.items.filter((_: any, i: number) => i !== idx) }))} style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: 12 }}>Remove</button>
+                </div>
+              ))}
             </div>
           </div>
-          </div>
           <Input label="Advance Paid (LKR)" type="number" value={rentalForm.advancePaid} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, advancePaid: e.target.value }))} />
-          <Btn onClick={saveRental} style={{ width: '100%' }}>Initialize Rental</Btn>
+          <Btn onClick={saveRental} style={{ width: '100%', height: 48 }}>Initialize Rental</Btn>
         </Modal>
       )}
 
@@ -632,42 +704,44 @@ function AdminPanelContent() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, marginBottom: 40 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 24 : 40, marginBottom: 40 }}>
               <div>
                 <div style={{ fontSize: 10, fontWeight: 800, color: '#84A98C', marginBottom: 8, textTransform: 'uppercase' }}>CUSTOMER</div>
                 <div style={{ fontWeight: 800, fontSize: 16 }}>{viewRental.customerName}</div>
                 <div style={{ fontSize: 13, color: '#6b7280' }}>{viewRental.customerPhone}</div>
               </div>
-              <div style={{ textAlign: 'right' }}>
+              <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
                 <div style={{ fontSize: 10, fontWeight: 800, color: '#84A98C', marginBottom: 8, textTransform: 'uppercase' }}>RENTAL PERIOD</div>
                 <div style={{ fontWeight: 700, fontSize: 14 }}>{viewRental.rentDate} to {viewRental.returnDate}</div>
                 <div style={{ fontSize: 13, color: '#1B4332', fontWeight: 800 }}>{viewRental.days} Total Days</div>
               </div>
             </div>
 
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 40 }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #EDE8E0' }}>
-                  <th style={{ textAlign: 'left', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>ITEM</th>
-                  <th style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>QTY</th>
-                  <th style={{ textAlign: 'right', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>PER DAY</th>
-                  <th style={{ textAlign: 'right', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>SUBTOTAL</th>
-                </tr>
-              </thead>
-              <tbody>
-                {viewRental.items.map((item: any, idx: number) => (
-                  <tr key={idx} style={{ borderBottom: '1px solid #F8F5F0' }}>
-                    <td style={{ padding: '12px 0', fontWeight: 600 }}>{item.itemName}</td>
-                    <td style={{ padding: '12px 0', textAlign: 'center' }}>{item.qty}</td>
-                    <td style={{ padding: '12px 0', textAlign: 'right' }}>LKR {item.pricePerDay}</td>
-                    <td style={{ padding: '12px 0', textAlign: 'right', fontWeight: 700 }}>LKR {(item.qty * item.pricePerDay * viewRental.days).toLocaleString()}</td>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 40, minWidth: isMobile ? 400 : 'auto' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #EDE8E0' }}>
+                    <th style={{ textAlign: 'left', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>ITEM</th>
+                    <th style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>QTY</th>
+                    <th style={{ textAlign: 'right', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>PER DAY</th>
+                    <th style={{ textAlign: 'right', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>SUBTOTAL</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {viewRental.items.map((item: any, idx: number) => (
+                    <tr key={idx} style={{ borderBottom: '1px solid #F8F5F0' }}>
+                      <td style={{ padding: '12px 0', fontWeight: 600 }}>{item.itemName}</td>
+                      <td style={{ padding: '12px 0', textAlign: 'center' }}>{item.qty}</td>
+                      <td style={{ padding: '12px 0', textAlign: 'right' }}>LKR {item.pricePerDay}</td>
+                      <td style={{ padding: '12px 0', textAlign: 'right', fontWeight: 700 }}>LKR {(item.qty * item.pricePerDay * viewRental.days).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <div style={{ width: '240px' }}>
+              <div style={{ width: isMobile ? '100%' : '240px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #F8F5F0' }}>
                   <span style={{ fontSize: 13, color: '#6b7280' }}>Total Amount</span>
                   <span style={{ fontWeight: 700 }}>LKR {viewRental.totalAmount.toLocaleString()}</span>
@@ -688,7 +762,7 @@ function AdminPanelContent() {
             </div>
           </div>
           
-          <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 12, marginTop: 24 }}>
             <Btn onClick={async () => {
               const element = document.getElementById('printable-bill');
               if (element) {

@@ -1,11 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { IconWA } from './Icons'
 import { waLink } from '@/lib/constants'
 
 export default function FloatingWA() {
   const [hovered, setHovered] = useState(false)
+  const pathname = usePathname()
+
+  if (pathname.startsWith('/admin')) return null
 
   return (
     <a

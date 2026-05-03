@@ -1,9 +1,15 @@
+'use client'
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { IconPin, IconWA, IconMail } from './Icons'
 import { waLink } from '@/lib/constants'
 
 export default function Footer() {
+  const pathname = usePathname()
+
+  if (pathname.startsWith('/admin')) return null
+
   return (
     <footer className="bg-dark-footer px-16 pt-20 pb-10 text-canvas">
       <div className="max-w-[1200px] mx-auto">
