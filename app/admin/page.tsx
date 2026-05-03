@@ -189,6 +189,10 @@ function AdminPanelContent() {
   const [modal, setModal] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [rentalCustSearch, setRentalCustSearch] = useState("");
+  const [showCustDropdown, setShowCustDropdown] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -491,7 +495,7 @@ function AdminPanelContent() {
           <div style={{ display: "flex", gap: 8 }}>
             {tab === "items" && <Btn onClick={() => { setItemForm(emptyItem); setEditItemId(null); setModal("item"); }} style={{ padding: isMobile ? "8px 12px" : "10px 20px" }}>{isMobile ? "+ Add" : "+ New Item"}</Btn>}
             {tab === "customers" && <Btn onClick={() => { setCustForm(emptyCustomer); setEditCustId(null); setModal("customer"); }} style={{ padding: isMobile ? "8px 12px" : "10px 20px" }}>{isMobile ? "+ Add" : "+ New Customer"}</Btn>}
-            {tab === "rentals" && <Btn onClick={() => { setRentalForm({ customerId: "", rentDate: "", returnDate: "", notes: "", items: [] }); setModal("rental"); }} style={{ padding: isMobile ? "8px 12px" : "10px 20px" }}>{isMobile ? "+ Add" : "+ New Rental"}</Btn>}
+            {tab === "rentals" && <Btn onClick={() => { setRentalForm({ customerId: "", rentDate: "", returnDate: "", notes: "", items: [] }); setRentalCustSearch(""); setShowCustDropdown(false); setModal("rental"); }} style={{ padding: isMobile ? "8px 12px" : "10px 20px" }}>{isMobile ? "+ Add" : "+ New Rental"}</Btn>}
           </div>
         </header>
 
@@ -581,11 +585,27 @@ function AdminPanelContent() {
 
           {/* Customers */}
           {tab === "customers" && (
-            <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: isMobile ? 500 : 'auto' }}>
-                <thead><tr style={{ background: "#F8F5F0" }}>{["NAME", "PHONE", "EMAIL", "ACTIONS"].map(h => <th key={h} style={{ padding: 16, textAlign: 'left', fontSize: 10, fontWeight: 800, color: "#84A98C" }}>{h}</th>)}</tr></thead>
-                <tbody>
-                  {customers.map(c => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ background: "#fff", borderRadius: 16, padding: "12px 16px", border: "1px solid #EDE8E0" }}>
+                <input 
+                  type="text" 
+                  placeholder="Search customers by name, phone, or email..." 
+                  value={customerSearch}
+                  onChange={(e) => setCustomerSearch(e.target.value)}
+                  style={{ width: '100%', border: 'none', outline: 'none', fontSize: 14 }}
+                />
+              </div>
+              <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: isMobile ? 500 : 'auto' }}>
+                  <thead><tr style={{ background: "#F8F5F0" }}>{["NAME", "PHONE", "EMAIL", "ACTIONS"].map(h => <th key={h} style={{ padding: 16, textAlign: 'left', fontSize: 10, fontWeight: 800, color: "#84A98C" }}>{h}</th>)}</tr></thead>
+                  <tbody>
+                    {customers
+                      .filter(c => 
+                        c.name.toLowerCase().includes(customerSearch.toLowerCase()) || 
+                        c.phone.includes(customerSearch) || 
+                        (c.email && c.email.toLowerCase().includes(customerSearch.toLowerCase()))
+                      )
+                      .map(c => (
                     <tr key={c.id} style={{ borderBottom: "1px solid #F8F5F0" }}>
                       <td style={{ padding: 16 }}><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><Avatar name={c.name} size={32} /><b>{c.name}</b></div></td>
                       <td style={{ padding: 16 }}>{c.phone}</td>
@@ -593,8 +613,12 @@ function AdminPanelContent() {
                       <td style={{ padding: 16 }}><Btn variant="secondary" onClick={() => { setCustForm(c); setEditCustId(c.id); setModal("customer"); }}>Edit</Btn></td>
                     </tr>
                   ))}
+                  {customers.filter(c => c.name.toLowerCase().includes(customerSearch.toLowerCase()) || c.phone.includes(customerSearch) || (c.email && c.email.toLowerCase().includes(customerSearch.toLowerCase()))).length === 0 && (
+                    <tr><td colSpan={4} style={{ padding: 32, textAlign: 'center', color: '#84A98C' }}>No customers found matching "{customerSearch}"</td></tr>
+                  )}
                 </tbody>
               </table>
+            </div>
             </div>
           )}
 
@@ -654,11 +678,47 @@ function AdminPanelContent() {
       )}
 
       {modal === "rental" && (
-        <Modal title="New Rental" onClose={() => setModal(null)}>
-          <Select label="Customer" value={rentalForm.customerId} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, customerId: e.target.value }))}>
-            <option value="">Select Renter</option>
-            {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </Select>
+        <Modal title="New Rental" onClose={() => { setModal(null); setRentalCustSearch(""); setShowCustDropdown(false); }}>
+          <div style={{ marginBottom: 14, position: 'relative' }}>
+            <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Customer</label>
+            <input 
+              type="text"
+              placeholder="Search and select customer..."
+              value={rentalCustSearch}
+              onChange={(e) => {
+                setRentalCustSearch(e.target.value);
+                setShowCustDropdown(true);
+                if (rentalForm.customerId) setRentalForm((f: any) => ({ ...f, customerId: "" }));
+              }}
+              onFocus={() => setShowCustDropdown(true)}
+              style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1px solid #EDE8E0", fontSize: 14, background: "#fff", color: "#1A1A18", boxSizing: "border-box", outline: "none" }}
+            />
+            {showCustDropdown && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#fff', border: '1px solid #EDE8E0', borderRadius: 10, marginTop: 4, maxHeight: 200, overflowY: 'auto', zIndex: 20, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                {customers
+                  .filter(c => c.name.toLowerCase().includes(rentalCustSearch.toLowerCase()))
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map(c => (
+                    <div 
+                      key={c.id} 
+                      onClick={() => {
+                        setRentalForm((f: any) => ({ ...f, customerId: c.id }));
+                        setRentalCustSearch(c.name);
+                        setShowCustDropdown(false);
+                      }}
+                      style={{ padding: '10px 14px', cursor: 'pointer', borderBottom: '1px solid #F8F5F0', fontSize: 14, background: rentalForm.customerId === c.id ? '#EDE8E0' : 'transparent' }}
+                      onMouseEnter={(e: any) => { if (rentalForm.customerId !== c.id) e.target.style.background = '#F8F5F0'; }}
+                      onMouseLeave={(e: any) => { if (rentalForm.customerId !== c.id) e.target.style.background = 'transparent'; }}
+                    >
+                      {c.name} <span style={{ fontSize: 12, color: '#84A98C', marginLeft: 8 }}>{c.phone}</span>
+                    </div>
+                  ))}
+                  {customers.filter(c => c.name.toLowerCase().includes(rentalCustSearch.toLowerCase())).length === 0 && (
+                    <div style={{ padding: '10px 14px', fontSize: 13, color: '#6b7280' }}>No customers found</div>
+                  )}
+              </div>
+            )}
+          </div>
           <div style={{ display: 'flex', gap: 10, flexDirection: isMobile ? 'column' : 'row' }}>
             <Input label="Start" type="date" value={rentalForm.rentDate} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, rentDate: e.target.value }))} />
             <Input label="End" type="date" value={rentalForm.returnDate} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, returnDate: e.target.value }))} />
