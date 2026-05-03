@@ -586,13 +586,17 @@ function AdminPanelContent() {
           {/* Customers */}
           {tab === "customers" && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ background: "#fff", borderRadius: 16, padding: "12px 16px", border: "1px solid #EDE8E0" }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: "#fff", borderRadius: 16, padding: "12px 16px", border: "1px solid #EDE8E0", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8B5AB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
                 <input 
                   type="text" 
                   placeholder="Search customers by name, phone, or email..." 
                   value={customerSearch}
                   onChange={(e) => setCustomerSearch(e.target.value)}
-                  style={{ width: '100%', border: 'none', outline: 'none', fontSize: 14 }}
+                  style={{ width: '100%', border: 'none', outline: 'none', fontSize: 14, color: '#1B4332', background: 'transparent' }}
                 />
               </div>
               <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflowX: "auto" }}>
