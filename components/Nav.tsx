@@ -22,6 +22,8 @@ export default function Nav() {
     setMenuOpen(false)
   }, [pathname])
 
+  if (pathname.startsWith('/admin')) return null
+
   return (
     <div className="fixed top-0 left-0 right-0 z-[200] flex justify-center px-6 py-4 pointer-events-none">
       <div
