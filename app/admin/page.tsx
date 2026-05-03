@@ -107,63 +107,63 @@ const INITIAL_ITEMS = [
 const CATEGORIES = ["Tents", "Cooking", "Accessories", "Other"];
 
 // --- UI Components ---
-const Avatar = ({ name, size = 36, bg = "#52796F", color = "#F8F5F0" }: any) => {
+const Avatar = ({ name, size = 36, bgClass = "bg-sage", textClass = "text-canvas" }: any) => {
   const initials = name?.split(" ").map((w: any) => w[0]).join("").slice(0, 2).toUpperCase() || "?";
   return (
-    <div style={{ width: size, height: size, borderRadius: "50%", background: bg, color, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, fontSize: size * 0.38, flexShrink: 0 }}>
+    <div style={{ width: size, height: size, fontSize: size * 0.38 }} className={`rounded-full flex items-center justify-center font-semibold shrink-0 ${bgClass} ${textClass}`}>
       {initials}
     </div>
   );
 };
 
-const Badge = ({ label, color = "#52796F" }: any) => (
-  <span style={{ background: color + "22", color, fontSize: 11, fontWeight: 700, padding: "2px 10px", borderRadius: 100, whiteSpace: "nowrap", textTransform: 'uppercase', letterSpacing: '0.02em' }}>{label}</span>
+const Badge = ({ label, colorClass = "text-sage bg-sage/20" }: any) => (
+  <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap uppercase tracking-wider ${colorClass}`}>{label}</span>
 );
 
 const Input = ({ label, ...props }: any) => (
-  <div style={{ marginBottom: 14 }}>
-    {label && <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</label>}
-    <input style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1px solid #EDE8E0", fontSize: 14, background: "#fff", color: "#1A1A18", boxSizing: "border-box", outline: "none" }} {...props} />
+  <div className="mb-3.5">
+    {label && <label className="block text-[11px] font-bold text-slate mb-1.5 uppercase tracking-wider">{label}</label>}
+    <input className="w-full px-3.5 py-2.5 rounded-xl border border-bone text-sm bg-white text-ink box-border outline-none focus:border-forest focus:ring-1 focus:ring-forest transition-colors" {...props} />
   </div>
 );
 
 const Select = ({ label, children, ...props }: any) => (
-  <div style={{ marginBottom: 14 }}>
-    {label && <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</label>}
-    <select style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1px solid #EDE8E0", fontSize: 14, background: "#fff", color: "#1A1A18", boxSizing: "border-box", outline: 'none' }} {...props}>{children}</select>
+  <div className="mb-3.5">
+    {label && <label className="block text-[11px] font-bold text-slate mb-1.5 uppercase tracking-wider">{label}</label>}
+    <select className="w-full px-3.5 py-2.5 rounded-xl border border-bone text-sm bg-white text-ink box-border outline-none focus:border-forest focus:ring-1 focus:ring-forest transition-colors appearance-none" {...props}>{children}</select>
   </div>
 );
 
 const Textarea = ({ label, ...props }: any) => (
-  <div style={{ marginBottom: 14 }}>
-    {label && <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</label>}
-    <textarea style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1px solid #EDE8E0", fontSize: 14, background: "#fff", color: "#1A1A18", boxSizing: "border-box", minHeight: 80, resize: "vertical", outline: 'none' }} {...props} />
+  <div className="mb-3.5">
+    {label && <label className="block text-[11px] font-bold text-slate mb-1.5 uppercase tracking-wider">{label}</label>}
+    <textarea className="w-full px-3.5 py-2.5 rounded-xl border border-bone text-sm bg-white text-ink box-border min-h-[80px] resize-y outline-none focus:border-forest focus:ring-1 focus:ring-forest transition-colors" {...props} />
   </div>
 );
 
-const Btn = ({ children, variant = "primary", onClick, style = {}, disabled, type = "button" }: any) => {
+const Btn = ({ children, variant = "primary", onClick, className = "", disabled, type = "button" }: any) => {
   const styles: any = {
-    primary: { background: "#1B4332", color: "#F8F5F0", border: "none" },
-    secondary: { background: "#F8F5F0", color: "#1B4332", border: "1px solid #EDE8E0" },
-    danger: { background: "#fee2e2", color: "#dc2626", border: "1px solid #fecaca" },
-    success: { background: "#25D366", color: "#fff", border: "none" },
-    ghost: { background: "transparent", color: "#6b7280", border: "1px solid #EDE8E0" },
+    primary: "bg-forest text-canvas hover:bg-forest-dark border-transparent",
+    secondary: "bg-canvas text-forest border border-bone hover:bg-bone",
+    danger: "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100",
+    success: "bg-whatsapp text-white hover:bg-[#20b858] border-transparent",
+    ghost: "bg-transparent text-slate border border-bone hover:bg-bone/50 hover:text-forest",
   };
   return (
-    <button type={type} onClick={onClick} disabled={disabled} style={{ padding: "10px 20px", borderRadius: 20, fontSize: 13, fontWeight: 700, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1, display: "inline-flex", alignItems: "center", gap: 6, transition: 'all 0.2s', ...styles[variant], ...style }}>
+    <button type={type} onClick={onClick} disabled={disabled} className={`px-5 py-2.5 rounded-btn text-[13px] font-bold inline-flex items-center justify-center gap-1.5 transition-all duration-200 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${styles[variant]} ${className}`}>
       {children}
     </button>
   );
 };
 
 const Modal = ({ title, onClose, children, width = 560 }: any) => (
-  <div style={{ position: "fixed", inset: 0, background: "rgba(14,20,16,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20, backdropFilter: 'blur(4px)' }}>
-    <div style={{ background: "#F8F5F0", borderRadius: 24, width: "100%", maxWidth: width, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 25px 50px rgba(0,0,0,0.25)", border: '1px solid rgba(27,67,50,0.1)' }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "24px 32px", borderBottom: "1px solid #EDE8E0" }}>
-        <h3 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: "#1B4332", textTransform: 'uppercase', letterSpacing: '-0.02em' }}>{title}</h3>
-        <button onClick={onClose} style={{ background: "#EDE8E0", border: "none", width: 32, height: 32, borderRadius: 10, cursor: "pointer", fontSize: 16, color: "#1B4332", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+  <div className="fixed inset-0 bg-[#0E1410]/75 flex items-center justify-center z-50 p-5 backdrop-blur-sm">
+    <div style={{ maxWidth: width }} className="bg-canvas rounded-card w-full max-h-[90vh] overflow-y-auto shadow-hero border border-forest/10">
+      <div className="flex justify-between items-center px-8 py-6 border-b border-bone">
+        <h3 className="m-0 text-lg font-black text-forest uppercase tracking-tight">{title}</h3>
+        <button onClick={onClose} className="bg-bone border-none w-8 h-8 rounded-lg cursor-pointer text-base text-forest flex items-center justify-center hover:bg-bone/80 transition-colors">✕</button>
       </div>
-      <div style={{ padding: 32 }}>{children}</div>
+      <div className="p-8">{children}</div>
     </div>
   </div>
 );
@@ -206,6 +206,33 @@ function AdminPanelContent() {
 
   // --- Auth & Data Sync ---
   useEffect(() => {
+    // If Firebase isn't configured, bypass auth and use mock data
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+      setUser({ email: "demo@wildtrail.com", uid: "123" } as User);
+      setAuthLoading(false);
+      
+      // Load mock data
+      setItems(INITIAL_ITEMS.map((item, idx) => ({ id: `mock-item-${idx}`, ...item })));
+      setCustomers([
+        { id: "cust-1", name: "John Doe", phone: "0771234567", email: "john@example.com" },
+        { id: "cust-2", name: "Jane Smith", phone: "0719876543", email: "jane@example.com" }
+      ]);
+      setRentals([
+        { 
+          id: 1714567890123, 
+          customerName: "John Doe", 
+          items: [{ itemName: "Manual Tent", qty: 1, pricePerDay: 500 }], 
+          rentDate: "2026-05-01", 
+          returnDate: "2026-05-03", 
+          days: 2, 
+          totalAmount: 1000, 
+          status: "active" 
+        }
+      ]);
+      setDataLoaded(true);
+      return;
+    }
+
     const unsubAuth = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setAuthLoading(false);
@@ -214,7 +241,7 @@ function AdminPanelContent() {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !process.env.NEXT_PUBLIC_FIREBASE_API_KEY) return;
 
     const unsubItems = onSnapshot(collection(db, STORAGE_KEYS.items), (snap) => {
       const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -340,34 +367,34 @@ function AdminPanelContent() {
 
   // --- Render Auth States ---
   if (authLoading) {
-    return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", color: "#1B4332", fontSize: 15, background: '#F8F5F0', fontWeight: 600 }}>Authenticating...</div>;
+    return <div className="flex items-center justify-center h-screen text-forest font-semibold bg-canvas">Authenticating...</div>;
   }
 
   // SECURITY: If not logged in and secret key is wrong, show nothing/404
   if (!user && !hasSecretKey) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", background: "#F8F5F0", color: "#1B4332", textAlign: 'center', padding: 20 }}>
-        <h1 style={{ fontSize: 72, margin: 0, opacity: 0.1 }}>404</h1>
-        <p style={{ fontWeight: 600, marginTop: -10 }}>The requested page was not found.</p>
-        <Btn variant="ghost" onClick={() => router.push("/")} style={{ marginTop: 20 }}>Return Home</Btn>
+      <div className="flex flex-col items-center justify-center h-screen bg-canvas text-forest text-center p-5">
+        <h1 className="text-7xl m-0 opacity-10">404</h1>
+        <p className="font-semibold -mt-2">The requested page was not found.</p>
+        <Btn variant="ghost" onClick={() => router.push("/")} className="mt-5">Return Home</Btn>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#F8F5F0", padding: 20 }}>
-        <div style={{ background: "#fff", padding: 40, borderRadius: 24, width: "100%", maxWidth: 400, boxShadow: "0 20px 40px rgba(0,0,0,0.05)", border: "1px solid #EDE8E0" }}>
-          <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{ width: 64, height: 64, background: "#1B4332", borderRadius: 20, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, margin: "0 auto 16px" }}>⛺</div>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: "#1B4332", textTransform: 'uppercase', letterSpacing: '-0.03em' }}>Admin Login</h1>
-            <p style={{ color: "#84A98C", fontSize: 13, fontWeight: 600, marginTop: 4 }}>Wild Trail Gear Management Console</p>
+      <div className="flex items-center justify-center min-h-screen bg-canvas p-5">
+        <div className="bg-white p-10 rounded-[24px] w-full max-w-[400px] shadow-card border border-bone">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-forest rounded-[20px] flex items-center justify-center text-3xl mx-auto mb-4 shadow-nav">⛺</div>
+            <h1 className="m-0 text-2xl font-black text-forest uppercase tracking-tight">Admin Login</h1>
+            <p className="text-sage-light text-[13px] font-semibold mt-1">Wild Trail Gear Management Console</p>
           </div>
           <form onSubmit={handleLogin}>
             <Input label="Email Address" type="email" required value={loginEmail} onChange={(e: any) => setLoginEmail(e.target.value)} placeholder="kesharapravodya@gmail.com" />
             <Input label="Password" type="password" required value={loginPass} onChange={(e: any) => setLoginPass(e.target.value)} placeholder="••••••••" />
-            {loginError && <div style={{ background: "#fee2e2", color: "#dc2626", padding: "10px 14px", borderRadius: 10, fontSize: 12, fontWeight: 600, marginBottom: 16, border: "1px solid #fecaca" }}>{loginError}</div>}
-            <Btn type="submit" style={{ width: "100%", height: 48, fontSize: 15 }}>Enter Management Console</Btn>
+            {loginError && <div className="bg-red-50 text-red-600 px-3.5 py-2.5 rounded-xl text-xs font-semibold mb-4 border border-red-200">{loginError}</div>}
+            <Btn type="submit" className="w-full h-12 text-[15px]">Enter Management Console</Btn>
           </form>
         </div>
       </div>
@@ -375,29 +402,27 @@ function AdminPanelContent() {
   }
 
   if (!dataLoaded) {
-    return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", color: "#1B4332", fontSize: 15, background: '#F8F5F0', fontWeight: 600 }}>Syncing Trail Cloud...</div>;
+    return <div className="flex items-center justify-center h-screen text-forest font-semibold bg-canvas">Syncing Trail Cloud...</div>;
   }
 
   // --- Dashboard Data ---
   const activeRentals = rentals.filter(r => r.status === "active").length;
   const totalRevenue = rentals.reduce((s, r) => s + r.totalAmount, 0);
-  const lowStock = items.filter(i => i.quantity < 5).length;
-  const sidebarW = 240;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', sans-serif", background: "#F8F5F0" }}>
+    <div className="flex min-h-screen font-sans bg-canvas text-ink selection:bg-forest selection:text-white">
       {/* Sidebar */}
-      <aside style={{ width: sidebarW, background: "#1B2E20", flexShrink: 0, display: "flex", flexDirection: "column", minHeight: "100vh", position: "sticky", top: 0, height: "100vh" }}>
-        <div style={{ padding: "32px 24px 24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-            <div style={{ width: 38, height: 38, background: "#84A98C", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>⛺</div>
+      <aside className="w-[240px] bg-dark-footer shrink-0 flex flex-col min-h-screen sticky top-0 h-screen">
+        <div className="pt-8 px-6 pb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-9.5 h-9.5 bg-sage-light rounded-xl flex items-center justify-center text-xl p-2 shrink-0">⛺</div>
             <div>
-              <div style={{ fontSize: 15, fontWeight: 900, color: "#F8F5F0", lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: '-0.02em' }}>WILD TRAIL</div>
-              <div style={{ fontSize: 11, color: "#84A98C", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Management</div>
+              <div className="text-[15px] font-black text-canvas leading-tight uppercase tracking-tight">WILD TRAIL</div>
+              <div className="text-[11px] text-sage-light font-bold uppercase tracking-eyebrow">Management</div>
             </div>
           </div>
         </div>
-        <nav style={{ flex: 1, padding: "0 16px" }}>
+        <nav className="flex-1 px-4 space-y-1">
           {[
             { id: "dashboard", icon: "◈", label: "Dashboard" },
             { id: "items", icon: "⊞", label: "Inventory" },
@@ -405,59 +430,59 @@ function AdminPanelContent() {
             { id: "customers", icon: "⊡", label: "Customers" },
             { id: "billing", icon: "⊠", label: "Financials" },
           ].map(n => (
-            <button key={n.id} onClick={() => setTab(n.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 12, border: "none", cursor: "pointer", marginBottom: 4, background: tab === n.id ? "#1B4332" : "transparent", color: tab === n.id ? "#84A98C" : "#A8B5AB", fontSize: 14, fontWeight: tab === n.id ? 700 : 500, textAlign: "left", transition: "all 0.2s" }}>
-              <span style={{ fontSize: 18, lineHeight: 1, opacity: tab === n.id ? 1 : 0.6 }}>{n.icon}</span>
+            <button key={n.id} onClick={() => setTab(n.id)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-none cursor-pointer text-sm transition-all duration-200 ${tab === n.id ? 'bg-forest text-sage-light font-bold' : 'bg-transparent text-dust font-medium hover:bg-forest/50'}`}>
+              <span className={`text-lg leading-none ${tab === n.id ? 'opacity-100' : 'opacity-60'}`}>{n.icon}</span>
               {n.label}
             </button>
           ))}
         </nav>
-        <div style={{ padding: "20px 24px", borderTop: "1px solid rgba(248,245,240,0.08)" }}>
-          <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
-             <Avatar name={user.email || "Admin"} size={28} bg="#1B4332" />
-             <div style={{ fontSize: 12, color: '#F8F5F0', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
+        <div className="p-5 px-6 border-t border-white/5">
+          <div className="mb-3 flex items-center gap-2.5">
+             <Avatar name={user.email || "Admin"} size={28} bgClass="bg-forest" />
+             <div className="text-xs text-canvas font-semibold overflow-hidden text-ellipsis whitespace-nowrap">{user.email}</div>
           </div>
-          <button onClick={handleLogout} style={{ width: '100%', padding: '8px', borderRadius: 8, background: 'rgba(220,38,38,0.1)', color: '#dc2626', border: '1px solid rgba(220,38,38,0.2)', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>LOGOUT</button>
+          <button onClick={handleLogout} className="w-full p-2 rounded-lg bg-red-500/10 text-red-500 border border-red-500/20 text-[11px] font-bold cursor-pointer hover:bg-red-500/20 transition-colors">LOGOUT</button>
         </div>
       </aside>
 
       {/* Main content */}
-      <main style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        <header style={{ background: "#fff", borderBottom: "1px solid #EDE8E0", padding: "0 32px", height: 72, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: "#1B4332", textTransform: 'uppercase', letterSpacing: '-0.03em' }}>{tab.toUpperCase()}</h1>
-          <div style={{ display: "flex", gap: 10 }}>
+      <main className="flex-1 flex flex-col min-w-0">
+        <header className="bg-white border-b border-bone px-8 h-18 shrink-0 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+          <h1 className="m-0 text-xl font-black text-forest uppercase tracking-tight">{tab.toUpperCase()}</h1>
+          <div className="flex gap-2.5">
             {tab === "items" && <Btn onClick={() => { setItemForm(emptyItem); setEditItemId(null); setModal("item"); }}>+ New Item</Btn>}
             {tab === "customers" && <Btn onClick={() => { setCustForm(emptyCustomer); setEditCustId(null); setModal("customer"); }}>+ New Customer</Btn>}
             {tab === "rentals" && <Btn onClick={() => { setRentalForm({ customerId: "", rentDate: "", returnDate: "", notes: "", items: [] }); setModal("rental"); }}>+ New Rental</Btn>}
           </div>
         </header>
 
-        <div style={{ padding: 32, flex: 1 }}>
+        <div className="p-8 flex-1">
           {/* Dashboard */}
           {tab === "dashboard" && (
             <div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20, marginBottom: 32 }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
                 {[
-                  { label: "Inventory Items", value: items.length, color: "#1B4332" },
-                  { label: "Active Rentals", value: activeRentals, color: "#52796F" },
-                  { label: "Registered Customers", value: customers.length, color: "#2D4A35" },
-                  { label: "Total Revenue", value: `LKR ${totalRevenue.toLocaleString()}`, color: "#C8651A" },
+                  { label: "Inventory Items", value: items.length, colorClass: "text-forest" },
+                  { label: "Active Rentals", value: activeRentals, colorClass: "text-sage" },
+                  { label: "Registered", value: customers.length, colorClass: "text-olive" },
+                  { label: "Total Revenue", value: `LKR ${totalRevenue.toLocaleString()}`, colorClass: "text-amber" },
                 ].map(s => (
-                  <div key={s.label} style={{ background: "#fff", borderRadius: 20, padding: "24px", border: "1px solid #EDE8E0", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#84A98C", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>{s.label}</div>
-                    <div style={{ fontSize: 28, fontWeight: 900, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</div>
+                  <div key={s.label} className="bg-white rounded-card p-6 border border-bone shadow-sm hover:shadow-md transition-shadow">
+                    <div className="text-[11px] font-bold text-sage-light uppercase tracking-eyebrow mb-2.5">{s.label}</div>
+                    <div className={`text-3xl font-black tracking-tight ${s.colorClass}`}>{s.value}</div>
                   </div>
                 ))}
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 24 }}>
-                <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
-                  <div style={{ padding: "20px 24px", borderBottom: "1px solid #EDE8E0", fontWeight: 900, fontSize: 15, color: "#1B4332" }}>RECENT RENTALS</div>
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div className="bg-white rounded-card border border-bone overflow-hidden shadow-sm">
+                  <div className="px-6 py-5 border-b border-bone font-black text-[15px] text-forest">RECENT RENTALS</div>
                   {rentals.slice(0, 5).map(r => (
-                    <div key={r.id} style={{ padding: "16px 24px", borderBottom: "1px solid #F8F5F0", display: "flex", justifyContent: "space-between" }}>
-                      <div><div style={{ fontWeight: 700 }}>{r.customerName}</div><div style={{ fontSize: 11, color: "#84A98C" }}>{r.rentDate}</div></div>
-                      <Badge label={r.status} color={r.status === "active" ? "#1B4332" : "#25D366"} />
+                    <div key={r.id} className="px-6 py-4 border-b border-canvas last:border-none flex justify-between items-center hover:bg-canvas/50 transition-colors">
+                      <div><div className="font-bold text-forest">{r.customerName}</div><div className="text-[11px] text-sage-light font-medium">{r.rentDate}</div></div>
+                      <Badge label={r.status} colorClass={r.status === "active" ? "text-forest bg-forest/10" : "text-whatsapp bg-whatsapp/10"} />
                     </div>
                   ))}
-                  {rentals.length === 0 && <div style={{ padding: 32, textAlign: 'center', color: '#84A98C' }}>No rentals found.</div>}
+                  {rentals.length === 0 && <div className="p-8 text-center text-sage-light">No rentals found.</div>}
                 </div>
               </div>
             </div>
@@ -465,22 +490,22 @@ function AdminPanelContent() {
 
           {/* Items */}
           {tab === "items" && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {items.map(item => (
-                <div key={item.id} style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
-                  <div style={{ height: 160, background: item.image ? `url(${item.image}) center/cover` : "#EDE8E0", position: 'relative' }}>
-                    <div style={{ position: "absolute", top: 12, right: 12 }}><Badge label={item.category} color="#1B4332" /></div>
+                <div key={item.id} className="bg-white rounded-card border border-bone overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col">
+                  <div className="h-40 bg-bone relative bg-center bg-cover" style={{ backgroundImage: item.image ? `url(${item.image})` : undefined }}>
+                    <div className="absolute top-3 right-3"><Badge label={item.category} colorClass="bg-forest text-canvas" /></div>
                   </div>
-                  <div style={{ padding: 20 }}>
-                    <div style={{ fontWeight: 900, fontSize: 16, color: "#1B4332", marginBottom: 6 }}>{item.name}</div>
-                    <div style={{ display: "flex", justifyContent: "space-between", background: '#F8F5F0', padding: 12, borderRadius: 16, marginBottom: 16 }}>
-                      <div><div style={{ fontSize: 10, fontWeight: 800 }}>STOCK</div><div style={{ fontSize: 18, fontWeight: 900 }}>{item.quantity}</div></div>
-                      <div style={{ textAlign: 'right' }}><div style={{ fontSize: 10, fontWeight: 800 }}>PRICE</div><div style={{ fontSize: 14, fontWeight: 900 }}>LKR {item.pricePerDay}</div></div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="font-black text-base text-forest mb-1.5">{item.name}</div>
+                    <div className="flex justify-between bg-canvas p-3 rounded-2xl mb-4">
+                      <div><div className="text-[10px] font-extrabold text-slate">STOCK</div><div className="text-lg font-black text-forest">{item.quantity}</div></div>
+                      <div className="text-right"><div className="text-[10px] font-extrabold text-slate">PRICE</div><div className="text-sm font-black text-forest pt-1">LKR {item.pricePerDay}</div></div>
                     </div>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <Btn variant="ghost" onClick={() => openQtyModal(item)} style={{ flex: 1, fontSize: 11 }}>STOCK</Btn>
-                      <Btn variant="secondary" onClick={() => { setItemForm(item); setEditItemId(item.id); setModal("item"); }} style={{ flex: 1, fontSize: 11 }}>EDIT</Btn>
-                      <Btn variant="danger" onClick={() => deleteItem(item.id)}>✕</Btn>
+                    <div className="flex gap-2 mt-auto">
+                      <Btn variant="ghost" onClick={() => openQtyModal(item)} className="flex-1 text-[11px] py-2">STOCK</Btn>
+                      <Btn variant="secondary" onClick={() => { setItemForm(item); setEditItemId(item.id); setModal("item"); }} className="flex-1 text-[11px] py-2">EDIT</Btn>
+                      <Btn variant="danger" onClick={() => deleteItem(item.id)} className="px-3 py-2">✕</Btn>
                     </div>
                   </div>
                 </div>
@@ -490,67 +515,73 @@ function AdminPanelContent() {
 
           {/* Rentals */}
           {tab === "rentals" && (
-            <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead><tr style={{ background: "#F8F5F0" }}>{["CUSTOMER", "GEAR", "RENT", "DAYS", "TOTAL", "STATUS", "ACTIONS"].map(h => <th key={h} style={{ padding: 16, textAlign: 'left', fontSize: 10, fontWeight: 800, color: "#84A98C" }}>{h}</th>)}</tr></thead>
-                <tbody>
-                  {rentals.map(r => (
-                    <tr key={r.id} style={{ borderBottom: "1px solid #F8F5F0" }}>
-                      <td style={{ padding: 16 }}><div style={{ fontWeight: 700 }}>{r.customerName}</div></td>
-                      <td style={{ padding: 16, fontSize: 12 }}>{r.items.map((x: any) => x.itemName).join(", ")}</td>
-                      <td style={{ padding: 16, fontSize: 13 }}>{r.rentDate}</td>
-                      <td style={{ padding: 16, fontWeight: 700 }}>{r.days}</td>
-                      <td style={{ padding: 16, fontWeight: 900 }}>LKR {r.totalAmount.toLocaleString()}</td>
-                      <td style={{ padding: 16 }}><Badge label={r.status} color={r.status === "active" ? "#1B4332" : "#25D366"} /></td>
-                      <td style={{ padding: 16 }}>
-                        <div style={{ display: "flex", gap: 6 }}>
-                          <Btn variant="ghost" onClick={() => setViewRental(r)} style={{ fontSize: 11 }}>BILL</Btn>
-                          {r.status === "active" && <Btn variant="success" onClick={() => markReturned(r.id)} style={{ fontSize: 11 }}>RETURN</Btn>}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="bg-white rounded-card border border-bone overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead><tr className="bg-canvas border-b border-bone">{["CUSTOMER", "GEAR", "RENT", "DAYS", "TOTAL", "STATUS", "ACTIONS"].map(h => <th key={h} className="p-4 text-left text-[10px] font-extrabold text-sage-light uppercase tracking-wider">{h}</th>)}</tr></thead>
+                  <tbody>
+                    {rentals.map(r => (
+                      <tr key={r.id} className="border-b border-canvas last:border-none hover:bg-canvas/50 transition-colors">
+                        <td className="p-4"><div className="font-bold text-forest">{r.customerName}</div></td>
+                        <td className="p-4 text-xs text-slate">{r.items.map((x: any) => x.itemName).join(", ")}</td>
+                        <td className="p-4 text-[13px] text-ink">{r.rentDate}</td>
+                        <td className="p-4 font-bold text-forest">{r.days}</td>
+                        <td className="p-4 font-black text-forest whitespace-nowrap">LKR {r.totalAmount.toLocaleString()}</td>
+                        <td className="p-4"><Badge label={r.status} colorClass={r.status === "active" ? "text-forest bg-forest/10" : "text-whatsapp bg-whatsapp/10"} /></td>
+                        <td className="p-4">
+                          <div className="flex gap-1.5">
+                            <Btn variant="ghost" onClick={() => setViewRental(r)} className="text-[11px] py-1.5 px-3">BILL</Btn>
+                            {r.status === "active" && <Btn variant="success" onClick={() => markReturned(r.id)} className="text-[11px] py-1.5 px-3">RETURN</Btn>}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
           {/* Customers */}
           {tab === "customers" && (
-            <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead><tr style={{ background: "#F8F5F0" }}>{["NAME", "PHONE", "EMAIL", "ACTIONS"].map(h => <th key={h} style={{ padding: 16, textAlign: 'left', fontSize: 10, fontWeight: 800, color: "#84A98C" }}>{h}</th>)}</tr></thead>
-                <tbody>
-                  {customers.map(c => (
-                    <tr key={c.id} style={{ borderBottom: "1px solid #F8F5F0" }}>
-                      <td style={{ padding: 16 }}><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><Avatar name={c.name} size={32} /><b>{c.name}</b></div></td>
-                      <td style={{ padding: 16 }}>{c.phone}</td>
-                      <td style={{ padding: 16 }}>{c.email || "-"}</td>
-                      <td style={{ padding: 16 }}><Btn variant="secondary" onClick={() => { setCustForm(c); setEditCustId(c.id); setModal("customer"); }}>Edit</Btn></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="bg-white rounded-card border border-bone overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead><tr className="bg-canvas border-b border-bone">{["NAME", "PHONE", "EMAIL", "ACTIONS"].map(h => <th key={h} className="p-4 text-left text-[10px] font-extrabold text-sage-light uppercase tracking-wider">{h}</th>)}</tr></thead>
+                  <tbody>
+                    {customers.map(c => (
+                      <tr key={c.id} className="border-b border-canvas last:border-none hover:bg-canvas/50 transition-colors">
+                        <td className="p-4"><div className="flex items-center gap-2.5"><Avatar name={c.name} size={32} /> <b className="text-forest">{c.name}</b></div></td>
+                        <td className="p-4 text-sm text-ink">{c.phone}</td>
+                        <td className="p-4 text-sm text-ink">{c.email || "-"}</td>
+                        <td className="p-4"><Btn variant="secondary" onClick={() => { setCustForm(c); setEditCustId(c.id); setModal("customer"); }} className="py-1.5 px-4 text-xs">Edit</Btn></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
           {/* Financials */}
           {tab === "billing" && (
-             <div style={{ background: "#fff", borderRadius: 24, border: "1px solid #EDE8E0", overflow: "hidden" }}>
-              <div style={{ padding: 24, borderBottom: '1px solid #F8F5F0', fontWeight: 900 }}>TRANSACTION HISTORY</div>
-               <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead><tr style={{ background: "#F8F5F0" }}>{["INVOICE #", "CUSTOMER", "AMOUNT", "STATUS"].map(h => <th key={h} style={{ padding: 16, textAlign: 'left', fontSize: 10, fontWeight: 800, color: "#84A98C" }}>{h}</th>)}</tr></thead>
-                <tbody>
-                  {rentals.map(r => (
-                    <tr key={r.id} style={{ borderBottom: "1px solid #F8F5F0" }}>
-                      <td style={{ padding: 16, fontFamily: 'monospace' }}>#{r.id.toString().slice(-8)}</td>
-                      <td style={{ padding: 16 }}>{r.customerName}</td>
-                      <td style={{ padding: 16, fontWeight: 900 }}>LKR {r.totalAmount.toLocaleString()}</td>
-                      <td style={{ padding: 16 }}><Badge label={r.status} color={r.status === "active" ? "#1B4332" : "#25D366"} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+             <div className="bg-white rounded-card border border-bone overflow-hidden shadow-sm">
+              <div className="p-6 border-b border-canvas font-black text-forest">TRANSACTION HISTORY</div>
+               <div className="overflow-x-auto">
+                 <table className="w-full border-collapse">
+                  <thead><tr className="bg-canvas border-b border-bone">{["INVOICE #", "CUSTOMER", "AMOUNT", "STATUS"].map(h => <th key={h} className="p-4 text-left text-[10px] font-extrabold text-sage-light uppercase tracking-wider">{h}</th>)}</tr></thead>
+                  <tbody>
+                    {rentals.map(r => (
+                      <tr key={r.id} className="border-b border-canvas last:border-none hover:bg-canvas/50 transition-colors">
+                        <td className="p-4 font-mono text-xs text-slate">#{r.id.toString().slice(-8)}</td>
+                        <td className="p-4 font-medium text-forest">{r.customerName}</td>
+                        <td className="p-4 font-black text-forest">LKR {r.totalAmount.toLocaleString()}</td>
+                        <td className="p-4"><Badge label={r.status} colorClass={r.status === "active" ? "text-forest bg-forest/10" : "text-whatsapp bg-whatsapp/10"} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+               </div>
              </div>
           )}
         </div>
@@ -561,22 +592,22 @@ function AdminPanelContent() {
         <Modal title={editItemId ? "Edit Item" : "Add New Item"} onClose={() => setModal(null)}>
           <Input label="Name" value={itemForm.name} onChange={(e: any) => setItemForm((f: any) => ({ ...f, name: e.target.value }))} />
           <Select label="Category" value={itemForm.category} onChange={(e: any) => setItemForm((f: any) => ({ ...f, category: e.target.value }))}>
-            {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+            {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
           </Select>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="grid grid-cols-2 gap-3">
             <Input label="Qty" type="number" value={itemForm.quantity} onChange={(e: any) => setItemForm((f: any) => ({ ...f, quantity: +e.target.value }))} />
             <Input label="LKR / Day" type="number" value={itemForm.pricePerDay} onChange={(e: any) => setItemForm((f: any) => ({ ...f, pricePerDay: +e.target.value }))} />
           </div>
           <Textarea label="Description" value={itemForm.description} onChange={(e: any) => setItemForm((f: any) => ({ ...f, description: e.target.value }))} />
-          <Btn onClick={saveItem} style={{ width: '100%', marginTop: 10 }}>Save Equipment</Btn>
+          <Btn onClick={saveItem} className="w-full mt-2">Save Equipment</Btn>
         </Modal>
       )}
 
       {qtyModal && (
         <Modal title="Update Stock" onClose={() => setQtyModal(null)} width={350}>
-          <div style={{ textAlign: 'center', marginBottom: 20 }}><div style={{ fontSize: 36, fontWeight: 900 }}>{qtyModal.quantity}</div></div>
+          <div className="text-center mb-5"><div className="text-5xl font-black text-forest">{qtyModal.quantity}</div></div>
           <Input label="Adjustment (+/-)" type="number" value={qtyDelta} onChange={(e: any) => setQtyDelta(+e.target.value)} />
-          <Btn onClick={applyQty} style={{ width: '100%' }}>Apply Stock Change</Btn>
+          <Btn onClick={applyQty} className="w-full mt-2">Apply Stock Change</Btn>
         </Modal>
       )}
 
@@ -585,7 +616,7 @@ function AdminPanelContent() {
           <Input label="Name" value={custForm.name} onChange={(e: any) => setCustForm((f: any) => ({ ...f, name: e.target.value }))} />
           <Input label="Phone" value={custForm.phone} onChange={(e: any) => setCustForm((f: any) => ({ ...f, phone: e.target.value }))} />
           <Input label="Email" value={custForm.email} onChange={(e: any) => setCustForm((f: any) => ({ ...f, email: e.target.value }))} />
-          <Btn onClick={saveCust} style={{ width: '100%' }}>Save Profile</Btn>
+          <Btn onClick={saveCust} className="w-full mt-2">Save Profile</Btn>
         </Modal>
       )}
 
@@ -595,11 +626,11 @@ function AdminPanelContent() {
             <option value="">Select Renter</option>
             {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </Select>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <Input label="Start" type="date" value={rentalForm.rentDate} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, rentDate: e.target.value }))} />
-            <Input label="End" type="date" value={rentalForm.returnDate} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, returnDate: e.target.value }))} />
+          <div className="flex gap-3">
+            <div className="flex-1"><Input label="Start" type="date" value={rentalForm.rentDate} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, rentDate: e.target.value }))} /></div>
+            <div className="flex-1"><Input label="End" type="date" value={rentalForm.returnDate} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, returnDate: e.target.value }))} /></div>
           </div>
-          <div style={{ background: '#f8fafc', padding: 15, borderRadius: 15, marginBottom: 15 }}>
+          <div className="bg-canvas p-4 rounded-card mb-4 border border-bone">
             <Select value={rentalItemSel.itemId} onChange={(e: any) => setRentalItemSel((s: any) => ({ ...s, itemId: e.target.value }))}>
               <option value="">Select Gear</option>
               {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
@@ -607,88 +638,87 @@ function AdminPanelContent() {
             <Btn onClick={() => {
               const itm = items.find(i => i.id === rentalItemSel.itemId);
               if (itm) setRentalForm((f: any) => ({ ...f, items: [...f.items, { itemId: itm.id, itemName: itm.name, qty: 1, pricePerDay: itm.pricePerDay }] }));
-            }}>Add Gear</Btn>
-            <div style={{ marginTop: 10 }}>
-              {rentalForm.items.map((x: any) => <div key={x.itemId} style={{ marginTop: 5, fontSize: 13, fontWeight: 700 }}>{x.itemName} <span style={{ color: '#84A98C' }}>×1</span></div>)}
+            }} className="w-full mb-3" variant="secondary">Add Gear</Btn>
+            <div className="space-y-1.5">
+              {rentalForm.items.map((x: any, idx: number) => <div key={idx} className="text-[13px] font-bold text-forest flex justify-between bg-white px-3 py-2 rounded-lg border border-bone">{x.itemName} <span className="text-sage-light">×1</span></div>)}
             </div>
           </div>
-          </div>
           <Input label="Advance Paid (LKR)" type="number" value={rentalForm.advancePaid} onChange={(e: any) => setRentalForm((f: any) => ({ ...f, advancePaid: e.target.value }))} />
-          <Btn onClick={saveRental} style={{ width: '100%' }}>Initialize Rental</Btn>
+          <Btn onClick={saveRental} className="w-full mt-2">Initialize Rental</Btn>
         </Modal>
       )}
 
       {viewRental && (
         <Modal title="Invoice Summary" onClose={() => setViewRental(null)} width={600}>
-          <div id="printable-bill" style={{ background: '#fff', padding: '40px', borderRadius: '16px', color: '#1A1A18', border: '1px solid #EDE8E0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40, borderBottom: '2px solid #1B4332', paddingBottom: 20 }}>
+          <div id="printable-bill" className="bg-white p-10 rounded-card text-ink border border-bone">
+            <div className="flex justify-between items-start mb-10 border-b-2 border-forest pb-5">
               <div>
-                <h2 style={{ margin: 0, color: '#1B4332', fontSize: 24, fontWeight: 900 }}>WILD TRAIL GEAR</h2>
-                <p style={{ margin: '4px 0', fontSize: 12, color: '#84A98C', fontWeight: 700 }}>Adventure Gear Rentals • Panadura</p>
+                <h2 className="m-0 text-forest text-2xl font-black uppercase tracking-tight">WILD TRAIL GEAR</h2>
+                <p className="my-1 text-xs text-sage-light font-bold uppercase tracking-wider">Adventure Gear Rentals • Panadura</p>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 18, fontWeight: 900, color: '#1B4332' }}>INVOICE</div>
-                <div style={{ fontSize: 12, color: '#6b7280' }}>#{viewRental.id.toString().slice(-8)}</div>
+              <div className="text-right">
+                <div className="text-lg font-black text-forest uppercase">INVOICE</div>
+                <div className="text-xs text-slate font-mono">#{viewRental.id.toString().slice(-8)}</div>
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, marginBottom: 40 }}>
+            <div className="grid grid-cols-2 gap-10 mb-10">
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, color: '#84A98C', marginBottom: 8, textTransform: 'uppercase' }}>CUSTOMER</div>
-                <div style={{ fontWeight: 800, fontSize: 16 }}>{viewRental.customerName}</div>
-                <div style={{ fontSize: 13, color: '#6b7280' }}>{viewRental.customerPhone}</div>
+                <div className="text-[10px] font-extrabold text-sage-light mb-2 uppercase tracking-wider">CUSTOMER</div>
+                <div className="font-bold text-base text-forest">{viewRental.customerName}</div>
+                <div className="text-[13px] text-slate">{viewRental.customerPhone}</div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 10, fontWeight: 800, color: '#84A98C', marginBottom: 8, textTransform: 'uppercase' }}>RENTAL PERIOD</div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>{viewRental.rentDate} to {viewRental.returnDate}</div>
-                <div style={{ fontSize: 13, color: '#1B4332', fontWeight: 800 }}>{viewRental.days} Total Days</div>
+              <div className="text-right">
+                <div className="text-[10px] font-extrabold text-sage-light mb-2 uppercase tracking-wider">RENTAL PERIOD</div>
+                <div className="font-bold text-sm text-forest">{viewRental.rentDate} to {viewRental.returnDate}</div>
+                <div className="text-[13px] text-forest font-extrabold">{viewRental.days} Total Days</div>
               </div>
             </div>
 
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 40 }}>
+            <table className="w-full border-collapse mb-10">
               <thead>
-                <tr style={{ borderBottom: '1px solid #EDE8E0' }}>
-                  <th style={{ textAlign: 'left', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>ITEM</th>
-                  <th style={{ textAlign: 'center', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>QTY</th>
-                  <th style={{ textAlign: 'right', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>PER DAY</th>
-                  <th style={{ textAlign: 'right', padding: '12px 0', fontSize: 11, color: '#84A98C' }}>SUBTOTAL</th>
+                <tr className="border-b border-bone">
+                  <th className="text-left py-3 text-[11px] text-sage-light font-bold tracking-wider">ITEM</th>
+                  <th className="text-center py-3 text-[11px] text-sage-light font-bold tracking-wider">QTY</th>
+                  <th className="text-right py-3 text-[11px] text-sage-light font-bold tracking-wider">PER DAY</th>
+                  <th className="text-right py-3 text-[11px] text-sage-light font-bold tracking-wider">SUBTOTAL</th>
                 </tr>
               </thead>
               <tbody>
                 {viewRental.items.map((item: any, idx: number) => (
-                  <tr key={idx} style={{ borderBottom: '1px solid #F8F5F0' }}>
-                    <td style={{ padding: '12px 0', fontWeight: 600 }}>{item.itemName}</td>
-                    <td style={{ padding: '12px 0', textAlign: 'center' }}>{item.qty}</td>
-                    <td style={{ padding: '12px 0', textAlign: 'right' }}>LKR {item.pricePerDay}</td>
-                    <td style={{ padding: '12px 0', textAlign: 'right', fontWeight: 700 }}>LKR {(item.qty * item.pricePerDay * viewRental.days).toLocaleString()}</td>
+                  <tr key={idx} className="border-b border-canvas last:border-none">
+                    <td className="py-3 font-semibold text-forest">{item.itemName}</td>
+                    <td className="py-3 text-center text-slate">{item.qty}</td>
+                    <td className="py-3 text-right text-slate font-mono text-sm">LKR {item.pricePerDay}</td>
+                    <td className="py-3 text-right font-bold text-forest font-mono">LKR {(item.qty * item.pricePerDay * viewRental.days).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <div style={{ width: '240px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #F8F5F0' }}>
-                  <span style={{ fontSize: 13, color: '#6b7280' }}>Total Amount</span>
-                  <span style={{ fontWeight: 700 }}>LKR {viewRental.totalAmount.toLocaleString()}</span>
+            <div className="flex justify-end">
+              <div className="w-[240px]">
+                <div className="flex justify-between py-2 border-b border-canvas">
+                  <span className="text-[13px] text-slate font-medium">Total Amount</span>
+                  <span className="font-bold text-forest font-mono">LKR {viewRental.totalAmount.toLocaleString()}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', color: '#059669' }}>
-                  <span style={{ fontSize: 13 }}>Advance Paid</span>
-                  <span style={{ fontWeight: 700 }}>- LKR {(viewRental.advancePaid || 0).toLocaleString()}</span>
+                <div className="flex justify-between py-2 text-whatsapp font-medium">
+                  <span className="text-[13px]">Advance Paid</span>
+                  <span className="font-bold font-mono">- LKR {(viewRental.advancePaid || 0).toLocaleString()}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderTop: '2px solid #1B4332', marginTop: 8 }}>
-                  <span style={{ fontWeight: 900, color: '#1B4332' }}>BALANCE DUE</span>
-                  <span style={{ fontWeight: 900, color: '#1B4332', fontSize: 18 }}>LKR {(viewRental.totalAmount - (viewRental.advancePaid || 0)).toLocaleString()}</span>
+                <div className="flex justify-between py-3 border-t-2 border-forest mt-2">
+                  <span className="font-black text-forest">BALANCE DUE</span>
+                  <span className="font-black text-forest text-lg font-mono">LKR {(viewRental.totalAmount - (viewRental.advancePaid || 0)).toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
-            <div style={{ marginTop: 60, textAlign: 'center', borderTop: '1px dashed #EDE8E0', paddingTop: 20 }}>
-              <p style={{ fontSize: 11, color: '#84A98C', margin: 0 }}>Thank you for choosing Wild Trail Gear! Please handle equipment with care.</p>
+            <div className="mt-16 text-center border-t border-dashed border-bone pt-5">
+              <p className="text-[11px] text-sage-light m-0 font-medium tracking-wider">Thank you for choosing Wild Trail Gear! Please handle equipment with care.</p>
             </div>
           </div>
           
-          <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
+          <div className="flex gap-3 mt-6">
             <Btn onClick={async () => {
               const element = document.getElementById('printable-bill');
               if (element) {
@@ -701,7 +731,7 @@ function AdminPanelContent() {
                 pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
                 pdf.save(`WTG-Invoice-${viewRental.id.toString().slice(-8)}.pdf`);
               }
-            }} variant="primary" style={{ flex: 1 }}>Download PDF</Btn>
+            }} variant="primary" className="flex-1">Download PDF</Btn>
             <Btn onClick={() => {
               const printContent = document.getElementById('printable-bill');
               if (printContent) {
@@ -710,8 +740,8 @@ function AdminPanelContent() {
                 window.print();
                 window.location.reload();
               }
-            }} variant="secondary" style={{ flex: 1 }}>Print Bill</Btn>
-            <Btn onClick={() => setViewRental(null)} variant="ghost" style={{ flex: 1 }}>Close</Btn>
+            }} variant="secondary" className="flex-1">Print Bill</Btn>
+            <Btn onClick={() => setViewRental(null)} variant="ghost" className="flex-1">Close</Btn>
           </div>
         </Modal>
       )}
@@ -721,7 +751,7 @@ function AdminPanelContent() {
 
 export default function AdminPanel() {
   return (
-    <Suspense fallback={<div>Loading Admin...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-screen text-forest font-semibold bg-canvas">Loading Admin...</div>}>
       <AdminPanelContent />
     </Suspense>
   );
